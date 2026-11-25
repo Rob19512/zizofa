@@ -1,0 +1,1 @@
+ShopFast was missing an automated data-contract / quality test on payment amount scale (euros vs cents), so a silent unit change passed naive validity checks.

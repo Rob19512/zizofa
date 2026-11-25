@@ -1,0 +1,189 @@
+[
+  {
+    "op": "core/sort",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "sorting": {
+      "criteria": [
+        {
+          "column": "customer_id",
+          "valueType": "string",
+          "reverse": false,
+          "caseSensitive": false,
+          "errorPosition": 1,
+          "blankPosition": 2
+        }
+      ]
+    },
+    "description": "Sort by customer_id"
+  },
+  {
+    "op": "core/blank-down",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "customer_id",
+    "description": "Blank down duplicate customer_id after sort"
+  },
+  {
+    "op": "core/row-removal",
+    "engineConfig": {
+      "facets": [
+        {
+          "type": "list",
+          "name": "customer_id",
+          "columnName": "customer_id",
+          "expression": "value",
+          "omitError": false,
+          "omitBlank": false,
+          "selectEmpty": true,
+          "selection": [
+            {
+              "v": {
+                "v": "",
+                "l": "(blank)"
+              }
+            }
+          ],
+          "selectError": false,
+          "invert": false
+        }
+      ],
+      "mode": "row-based"
+    },
+    "description": "Remove blanked duplicate customer_id rows"
+  },
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "first_name",
+    "expression": "value.trim().replace(/\\s+/,' ').toTitlecase()",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 0,
+    "description": "Names: trim + collapse + titlecase"
+  },
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "last_name",
+    "expression": "value.trim().replace(/\\s+/,' ').toTitlecase()",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 0,
+    "description": "Names: trim + collapse + titlecase"
+  },
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "email",
+    "expression": "value.trim().toLowercase()",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 0,
+    "description": "Email lower/trim"
+  },
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "country",
+    "expression": "with(value.trim(), v, if(or(v=='FR',v=='fr',v=='France',v=='france',v=='FRA'), 'FR', if(or(v=='DE',v=='de',v=='DEU',v=='Germany',v=='germany',v=='Allemagne'), 'DE', if(or(v=='ES',v=='es',v=='Spain',v=='spain',v=='Espagne',v=='ESP'), 'ES', if(or(v=='BE',v=='be',v=='BEL',v=='Belgium',v=='belgium',v=='Belgique'), 'BE', v)))))",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 0,
+    "description": "Country spellings -> FR/DE/ES/BE"
+  },
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "signup_date",
+    "expression": "if(isNotNull(value.match(/\\d{2}\\/\\d{2}\\/\\d{4}/)), with(value.split('/'), p, p[2]+'-'+p[1]+'-'+p[0]), if(isNotNull(value.match(/\\d{2}-\\d{2}-\\d{4}/)), with(value.split('-'), p, p[2]+'-'+p[0]+'-'+p[1]), if(isNotNull(value.match(/\\d{4}\\/\\d{2}\\/\\d{2}/)), value.replace('/', '-'), value)))",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 0,
+    "description": "signup_date -> YYYY-MM-DD"
+  },
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "birth_date",
+    "expression": "if(isNotNull(value.match(/\\d{2}\\/\\d{2}\\/\\d{4}/)), with(value.split('/'), p, p[2]+'-'+p[1]+'-'+p[0]), if(isNotNull(value.match(/\\d{2}-\\d{2}-\\d{4}/)), with(value.split('-'), p, p[2]+'-'+p[0]+'-'+p[1]), if(isNotNull(value.match(/\\d{4}\\/\\d{2}\\/\\d{2}/)), value.replace('/', '-'), value)))",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 0,
+    "description": "birth_date -> YYYY-MM-DD"
+  },
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "loyalty_tier",
+    "expression": "with(value.trim().toLowercase(), v, if(v=='platinium','platinum',v))",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 0,
+    "description": "loyalty lower + fix platinium"
+  },
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "postal_code",
+    "expression": "if(and(cells['country'].value == 'FR', value.length() == 4), '0' + value, value)",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 0,
+    "description": "FR 4-digit postal + leading 0"
+  },
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "phone",
+    "expression": "with(value.replace(/[^0-9+]/, ''), v, if(v.startsWith('0033'), '+33' + v.substring(4), if(and(v.startsWith('0'), v.length() == 10), '+33' + v.substring(1), v)))",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 0,
+    "description": "Phones to +33\u2026"
+  },
+  {
+    "op": "core/column-addition",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "baseColumnName": "email",
+    "expression": "facetCount(value, 'value', 'email') > 1",
+    "onError": "set-to-blank",
+    "newColumnName": "is_duplicate_email",
+    "columnInsertIndex": 4,
+    "description": "Flag duplicate emails (do not delete)"
+  }
+]

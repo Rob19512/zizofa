@@ -1,0 +1,12 @@
+dimension,rule_in_plain_words,column,how_you_measured_it,failing_rows,total_rows,score_pct,severity_high_medium_low,who_should_fix_owner_steward_custodian
+Completeness,Every customer has an email,email,count blank email after strip,48,1241,96.13,high,Owner sets threshold; Custodian fixes signup form
+Completeness,Every customer has a country,country,count blank country after strip,37,1241,97.02,medium,Steward
+Uniqueness,customer_id is unique,customer_id,rows that share a duplicated customer_id,16,1241,98.71,high,Custodian dedupes load; Owner decides merge policy
+Uniqueness,One account per email,email,duplicated emails after strip+lower (non-empty),120,1241,90.33,high,Owner merge policy; Steward investigates
+Validity,Email looks like an email,email,"regex ^[^@\s]+@[^@\s]+\.[a-zA-Z]{2,}$ on non-empty emails",19,1241,98.47,high,Custodian adds form validation
+Validity,loyalty_tier in bronze/silver/gold/platinum,loyalty_tier,value not in allowed set after lowercasing,4,1241,99.68,medium,Steward
+Validity,French postal codes have 5 digits,postal_code,France-like country AND postal_code not ^\d{5}$,48,1241,96.13,medium,Custodian fixes source export
+Consistency,Country is ISO-2 FR/DE/ES/BE,country,non-empty country not in {FR,DE,ES,BE},299,1241,75.91,medium,Steward standardises; Custodian implements mapping
+Consistency,signup_date is YYYY-MM-DD,signup_date,non-empty signup_date not matching ISO date,303,1241,75.58,medium,Custodian
+Accuracy,Birth date plausible (1906 to today-18y),birth_date,unparsable OR before 1906 OR younger than 18,10,1241,99.19,high,Owner KYC policy; Steward reviews
+Timeliness,order_date is filled so freshness can be measured,order_date,empty order_date in orders.csv,11,5207,99.79,low,Custodian pipeline SLA; Owner owns threshold
