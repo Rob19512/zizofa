@@ -1,0 +1,68 @@
+version: 2
+
+models:
+  - name: fct_orders
+    description: "One row per order with gross, refunded and net revenue. Source of the Sales dashboard and the Finance report."
+    meta:
+      owner: "Sara Martin (Head of Sales)"
+      steward: "Karim Benali (Analytics Engineer)"
+      domain: sales
+      tier: gold
+    columns:
+      - name: order_id
+        description: "Technical identifier of the order."
+        data_tests: [unique, not_null]
+      - name: customer_id
+        description: "Foreign key to the customer who placed the order."
+      - name: order_date
+        description: "Date the order was placed (ISO date)."
+      - name: status
+        description: "Order lifecycle status (pending, shipped, delivered, cancelled, returned)."
+      - name: channel
+        description: "Sales channel used to place the order."
+      - name: shipping_country
+        description: "Country where the order is shipped."
+      - name: gross_revenue_eur
+        description: "Gross order amount in euros (from total_amount_eur), including VAT."
+      - name: refunded_eur
+        description: "Sum of refunded payment amounts in euros for this order (0 if none)."
+      - name: net_revenue_eur
+        description: "{{ doc('net_revenue') }}"
+
+  - name: dim_customers
+    description: "One row per customer with lifetime order metrics for Sales and churn analysis."
+    meta:
+      owner: "Sara Martin (Head of Sales)"
+      steward: "Karim Benali (Analytics Engineer)"
+      domain: customer
+      tier: gold
+    columns:
+      - name: customer_id
+        description: "Technical identifier of the customer account."
+        data_tests: [unique, not_null]
+      - name: first_name
+        description: "Customer first name."
+        tags: ['pii']
+        meta: {classification: confidential}
+      - name: last_name
+        description: "Customer last name."
+        tags: ['pii']
+        meta: {classification: confidential}
+      - name: email
+        description: "Login email, trimmed and lower-cased."
+        tags: ['pii']
+        meta: {classification: confidential}
+      - name: country_code
+        description: "ISO country of residence (FR, DE, ES, BE)."
+      - name: loyalty_tier
+        description: "Loyalty programme tier (bronze, silver, gold, platinum)."
+      - name: signup_date
+        description: "Date the customer account was created."
+      - name: has_marketing_consent
+        description: "True if the customer opted in to marketing emails."
+      - name: lifetime_orders
+        description: "Count of orders linked to this customer (all statuses)."
+      - name: last_order_date
+        description: "Most recent order_date for this customer; null if no orders."
+      - name: lifetime_net_revenue_eur
+        description: "Sum of net_revenue_eur across all orders for this customer."

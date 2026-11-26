@@ -1,0 +1,16 @@
+table,column,business_meaning,data_type,unit_or_format,allowed_values_or_range,nullable_Y_N,example_value,personal_data_Y_N,classification,owner,source_system
+stg_orders,order_id,Technical identifier of one customer order,INTEGER,surrogate key,unique positive integer,N,700010,N,internal,Sara Martin (Head of Sales),ShopFast OMS / orders.csv
+stg_orders,customer_id,Customer account that placed the order (FK to customers),INTEGER,FK → stg_customers.customer_id,positive integer,N,10375,N,internal,Sara Martin (Head of Sales),ShopFast OMS / orders.csv
+stg_orders,order_date,Calendar date the order was placed,DATE,YYYY-MM-DD,valid calendar date,N,2026-07-19,N,internal,Sara Martin (Head of Sales),ShopFast OMS / orders.csv
+stg_orders,status,Lifecycle status of the order (normalized spelling),VARCHAR,lowercase enum,"pending | shipped | delivered | cancelled | returned",N,delivered,N,internal,Sara Martin (Head of Sales),ShopFast OMS / orders.csv
+stg_orders,channel,Sales channel used to place the order,VARCHAR,lowercase enum,"web | mobile_app | marketplace",N,mobile_app,N,internal,Sara Martin (Head of Sales),ShopFast OMS / orders.csv
+stg_orders,shipping_country,Country where the order is shipped,VARCHAR,ISO country / free text,"typically FR DE ES BE",N,DE,N,internal,Sara Martin (Head of Sales),ShopFast OMS / orders.csv
+stg_orders,total_amount_eur,Gross order amount including VAT and shipping,DECIMAL(10;2),EUROS 2 decimals,typically 0–1500 EUR,N,184.31,N,internal,Sara Martin (Head of Sales),ShopFast OMS / orders.csv
+stg_payments,payment_id,Technical identifier of one payment event,INTEGER,surrogate key,unique positive integer,N,900001,N,internal,Paul Girard (Head of Finance),Payment provider / payments.csv
+stg_payments,order_id,Order this payment belongs to (FK to orders),INTEGER,FK → stg_orders.order_id,positive integer,N,700002,N,internal,Paul Girard (Head of Finance),Payment provider / payments.csv
+stg_payments,payment_date,Date the payment event was recorded,DATE,YYYY-MM-DD,valid calendar date,N,2026-10-08,N,internal,Paul Girard (Head of Finance),Payment provider / payments.csv
+stg_payments,method,How the customer paid,VARCHAR,lowercase enum,"card | paypal | bank_transfer | apple_pay",N,apple_pay,N,internal,Paul Girard (Head of Finance),Payment provider / payments.csv
+stg_payments,amount,Payment amount — EUROS with 2 decimals NOT cents,DECIMAL(12;2),EUROS 2 decimals,typically 0–1500 EUR,N,217.38,N,internal,Paul Girard (Head of Finance),Payment provider / payments.csv
+stg_payments,currency,ISO currency code of the payment,VARCHAR,ISO 4217,EUR,N,EUR,N,internal,Paul Girard (Head of Finance),Payment provider / payments.csv
+stg_payments,card_last4,Last 4 digits of the card when method is card; empty otherwise,VARCHAR,4 digits or empty,0000–9999 or blank,Y,6552,Y,confidential,Paul Girard (Head of Finance),Payment provider / payments.csv
+stg_payments,payment_status,Outcome of the payment event,VARCHAR,lowercase enum,"captured | refunded",N,captured,N,internal,Paul Girard (Head of Finance),Payment provider / payments.csv
